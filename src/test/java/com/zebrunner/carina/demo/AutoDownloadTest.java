@@ -24,76 +24,118 @@ import java.util.UUID;
 
 public class AutoDownloadTest implements IAbstractTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    
-    @BeforeSuite()
-    public void BeforeAutoDownload() {
-        R.CONFIG.put("auto_download", "true");
-        R.CONFIG.put("auto_screenshot", "false");
-    }
+	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    @Test()
-    public void getArtifactTest() {
-        String url = "https://www.free-css.com/assets/files/free-css-templates/download/page280/klassy-cafe.zip";
+	@BeforeSuite()
+	public void BeforeAutoDownload() {
+		R.CONFIG.put("auto_download", "true");
+		R.CONFIG.put("auto_screenshot", "false");
+	}
 
-        LOGGER.info("Artifact's folder: {}", SessionContext.getArtifactsFolder());
+	@Test()
+	public void getArtifactTest() {
+		String url = "https://gbihr.org/images/docs/test.pdf";
 
-        DriverHelper driverHelper = new DriverHelper(getDriver());
-        driverHelper.openURL(url);
-        pause(1);
+		LOGGER.info("Artifact's folder: {}", SessionContext.getArtifactsFolder());
 
-        Optional<Path> file = SessionContext.getArtifact(getDriver(), "klassy-cafe.zip");
-        Assert.assertTrue(file.isPresent() && Files.exists(file.get()), "klassy-cafe.zip is not available among downloaded artifacts");
-    }
-    
-    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = "Unable to find artifact:.*")
-    public void getInvalidArtifactTest() {
-        String url = "https://www.free-css.com/assets/files/free-css-templates/download/page280/klassy-cafe.zip";
+		DriverHelper driverHelper = new DriverHelper(getDriver());
+		driverHelper.openURL(url);
+		pause(1);
 
-        LOGGER.info("Artifact's folder: {}", SessionContext.getArtifactsFolder());
+		Optional<Path> file = SessionContext.getArtifact(getDriver(), "test.pdf");
+		Assert.assertTrue(file.isPresent() && Files.exists(file.get()),
+				"test.pdf is not available among downloaded artifacts");
+	}
 
-        DriverHelper driverHelper = new DriverHelper(getDriver());
-        driverHelper.openURL(url);
+	@Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = "Unable to find artifact:.*")
+	public void getInvalidArtifactTest() {
+		String url = "https://freetestdata.com/wp-content/uploads/2021/09/Free_Test_Data_100KB_PDF.pdf";
 
-        Optional<Path> path = SessionContext.getArtifact(getDriver(), UUID.randomUUID().toString());
-        Assert.assertTrue(path.isEmpty(), "artifact with random name available among downloaded artifacts");
+		LOGGER.info("Artifact's folder: {}", SessionContext.getArtifactsFolder());
 
-    }
-   
-    
-    @Test()
-    public void getArtifactsTest() {
-        String url1 = "https://www.free-css.com/assets/files/free-css-templates/download/page279/tropiko.zip";
-        String url2 = "https://www.free-css.com/assets/files/free-css-templates/download/page280/solar.zip";
+		DriverHelper driverHelper = new DriverHelper(getDriver());
+		driverHelper.openURL(url);
 
-        R.CONFIG.put("auto_download", "true");
+		Optional<Path> path = SessionContext.getArtifact(getDriver(), UUID.randomUUID().toString());
+		Assert.assertTrue(path.isEmpty(), "artifact with random name available among downloaded artifacts");
 
-        LOGGER.info("Artifact's folder: {}", SessionContext.getArtifactsFolder());
+	}
 
-        DriverHelper driverHelper = new DriverHelper(getDriver());
-        driverHelper.openURL(url1);
-        driverHelper.openURL(url2);
+	@Test()
+	public void getArtifactsTest() {
+		String url1 = "https://gbihr.org/images/docs/test.pdf";
+		String url2 = "https://freetestdata.com/wp-content/uploads/2021/09/Free_Test_Data_100KB_PDF.pdf";
+		String url3 = "https://freetestdata.com/wp-content/uploads/2023/07/350KB.pdf";
+//		String url2 = "https://freetestdata.com/wp-content/uploads/2022/11/Free_Test_Data_10.5MB_PDF.pdf";
 
-        FluentWait<WebDriver> wait = new FluentWait<>(getDriver())
-                .pollingEvery(Duration.ofSeconds(1))
-                .withTimeout(Duration.ofSeconds(30));
+		R.CONFIG.put("auto_download", "true");
 
-        SoftAssert softAssert = new SoftAssert();
+		LOGGER.info("Artifact's folder: {}", SessionContext.getArtifactsFolder());
 
-        softAssert.assertTrue(ArtifactUtils.isArtifactPresent(wait, "tropiko.zip"), "tropiko.zip not found");
-        softAssert.assertTrue(ArtifactUtils.isArtifactPresent(wait, "solar.zip"), "solar.zip not found");
+		DriverHelper driverHelper = new DriverHelper(getDriver());
+		driverHelper.openURL(url1);
+		driverHelper.openURL(url2);
+		driverHelper.openURL(url3);
 
-        softAssert.assertAll();
+		FluentWait<WebDriver> wait = new FluentWait<>(getDriver()).pollingEvery(Duration.ofSeconds(1))
+				.withTimeout(Duration.ofSeconds(90));
 
-        List<Path> files = SessionContext.getArtifacts(getDriver(), ".+");
-        Assert.assertEquals(files.size(), 2);
+		SoftAssert softAssert = new SoftAssert();
 
-        files = SessionContext.getArtifacts(getDriver(), "solar.z.+");
-        Assert.assertEquals(files.size(), 1);
+		softAssert.assertTrue(ArtifactUtils.isArtifactPresent(wait, "test.pdf"), "test.pdf not found");
+		softAssert.assertTrue(ArtifactUtils.isArtifactPresent(wait, "Free_Test_Data_100KB_PDF.pdf"),
+				"Free_Test_Data_100KB_PDF.pdf not found");
+		softAssert.assertTrue(ArtifactUtils.isArtifactPresent(wait, "350KB.pdf"), "350KB.pdf not found");
 
-        files = SessionContext.getArtifacts(getDriver(), "UUID.randomUUID().toString()");
-        Assert.assertEquals(files.size(), 0);
+		softAssert.assertAll();
 
-    }
+		List<Path> files = SessionContext.getArtifacts(getDriver(), ".+");
+		Assert.assertEquals(files.size(), 3);
+
+		files = SessionContext.getArtifacts(getDriver(), "Free_Test_Data.+");
+		Assert.assertEquals(files.size(), 1);
+
+		files = SessionContext.getArtifacts(getDriver(), "UUID.randomUUID().toString()");
+		Assert.assertEquals(files.size(), 0);
+
+		List<String> fileNames = SessionContext.listArtifacts(getDriver());
+		LOGGER.info(fileNames.toString());
+
+		files = SessionContext.getArtifacts(getDriver(), ".+KB.*.pdf");
+		Assert.assertEquals(files.size(), 2);
+
+	}
+
+	@Test()
+	public void getLargeArtifactsTest() {
+//		String url = "https://www.sampledocs.in/DownloadFiles/SampleFile?filename=sampledocs-100mb-pdf-file&ext=pdf";
+		String url = "https://freetestdata.com/wp-content/uploads/2025/03/Free_Test_Data_2.15MB_PDF.pdf";
+
+		R.CONFIG.put("auto_download", "true");
+
+		LOGGER.info("Artifact's folder: {}", SessionContext.getArtifactsFolder());
+
+		DriverHelper driverHelper = new DriverHelper(getDriver());
+		driverHelper.openURL(url);
+
+		FluentWait<WebDriver> wait = new FluentWait<>(getDriver()).pollingEvery(Duration.ofSeconds(1))
+				.withTimeout(Duration.ofSeconds(300));
+
+		SoftAssert softAssert = new SoftAssert();
+
+		softAssert.assertTrue(ArtifactUtils.isArtifactPresent(wait, "Free_Test_Data_2.15MB_PDF.pdf"),
+				"Free_Test_Data_2.15MB_PDF.pdf not found");
+//		softAssert.assertTrue(ArtifactUtils.isArtifactPresent(wait, "sampledocs-100mb-pdf-file.pdf"), "sampledocs-100mb-pdf-file.pdf not found");
+
+		softAssert.assertAll();
+
+		List<Path> files = SessionContext.getArtifacts(getDriver(), ".+");
+		Assert.assertEquals(files.size(), 1);
+
+		files = SessionContext.getArtifacts(getDriver(), "Free_Test_Data_2.15MB_PDF.pdf");
+//		files = SessionContext.getArtifacts(getDriver(), "sampledocs-100mb-pdf-file.pdf");
+		Assert.assertEquals(files.size(), 1);
+
+	}
 
 }
