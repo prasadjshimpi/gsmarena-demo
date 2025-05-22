@@ -42,7 +42,7 @@ public class AutoDownloadTest implements IAbstractTest {
 		driverHelper.openURL(url);
 		pause(5);
 
-		System.out.println(ReportContext.getTestDirectory() + File.separator + "downloads" + File.separator + "test.pdf");
+		LOGGER.info(ReportContext.getTestDirectory() + File.separator + "downloads" + File.separator + "test.pdf");
 		File file = new File(ReportContext.getTestDirectory() + File.separator + "downloads" + File.separator + "test.pdf");
 		System.out.println(file.exists());
 		Assert.assertTrue(file.exists(), "test.pdf is not available among downloaded artifacts");
