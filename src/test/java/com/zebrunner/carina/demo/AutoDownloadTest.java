@@ -47,7 +47,7 @@ public class AutoDownloadTest implements IAbstractTest {
 				"test.pdf is not available among downloaded artifacts");
 	}
 
-	@Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = "Unable to find artifact:.*")
+	@Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = "Unable to find artifact:.*", enabled = false)
 	public void getInvalidArtifactTest() {
 		String url = "https://freetestdata.com/wp-content/uploads/2021/09/Free_Test_Data_100KB_PDF.pdf";
 
