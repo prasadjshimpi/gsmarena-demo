@@ -3,6 +3,7 @@ package com.zebrunner.carina.demo;
 import com.zebrunner.carina.core.IAbstractTest;
 import com.zebrunner.carina.demo.utils.ArtifactUtils;
 import com.zebrunner.carina.utils.R;
+import com.zebrunner.carina.utils.report.ReportContext;
 import com.zebrunner.carina.utils.report.SessionContext;
 import com.zebrunner.carina.webdriver.DriverHelper;
 import org.openqa.selenium.WebDriver;
@@ -14,6 +15,7 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 
+import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,15 +38,17 @@ public class AutoDownloadTest implements IAbstractTest {
 	public void getArtifactTest() {
 		String url = "https://gbihr.org/images/docs/test.pdf";
 
-		LOGGER.info("Artifact's folder: {}", SessionContext.getArtifactsFolder());
-
 		DriverHelper driverHelper = new DriverHelper(getDriver());
 		driverHelper.openURL(url);
-		pause(1);
+		pause(5);
 
-		Optional<Path> file = SessionContext.getArtifact(getDriver(), "test.pdf");
-		Assert.assertTrue(file.isPresent() && Files.exists(file.get()),
-				"test.pdf is not available among downloaded artifacts");
+		System.out.println(ReportContext.getTestDirectory() + File.separator + "downloads" + File.separator + "test.pdf");
+		File file = new File(ReportContext.getTestDirectory() + File.separator + "downloads" + File.separator + "test.pdf");
+		System.out.println(file.exists());
+		Assert.assertTrue(file.exists(), "test.pdf is not available among downloaded artifacts");
+
+//		Optional<Path> file = SessionContext.getArtifact(getDriver(), "test.pdf");
+//		Assert.assertTrue(file.isPresent() && Files.exists(file.get()), "test.pdf is not available among downloaded artifacts");
 	}
 
 	@Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = "Unable to find artifact:.*", enabled = false)
