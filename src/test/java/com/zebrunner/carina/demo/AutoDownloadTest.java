@@ -81,8 +81,8 @@ public class AutoDownloadTest implements IAbstractTest {
 		driverHelper.openURL(url2);
 		driverHelper.openURL(url3);
 
-		FluentWait<WebDriver> wait = new FluentWait<>(getDriver()).pollingEvery(Duration.ofSeconds(1))
-				.withTimeout(Duration.ofSeconds(90));
+		FluentWait<WebDriver> wait = new FluentWait<>(getDriver()).pollingEvery(Duration.ofSeconds(5))
+				.withTimeout(Duration.ofSeconds(30));
 
 		SoftAssert softAssert = new SoftAssert();
 
