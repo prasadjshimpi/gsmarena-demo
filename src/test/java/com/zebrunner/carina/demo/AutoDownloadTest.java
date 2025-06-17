@@ -30,7 +30,7 @@ public class AutoDownloadTest implements IAbstractTest {
 
 	@BeforeSuite()
 	public void BeforeAutoDownload() {
-		R.CONFIG.put("auto_download", "true");
+		R.CONFIG.put("auto_download", "false");
 		R.CONFIG.put("auto_screenshot", "false");
 	}
 
