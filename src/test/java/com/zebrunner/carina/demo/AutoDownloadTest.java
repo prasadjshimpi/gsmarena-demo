@@ -42,13 +42,13 @@ public class AutoDownloadTest implements IAbstractTest {
 		driverHelper.openURL(url);
 		pause(5);
 
-		LOGGER.info(ReportContext.getTestDirectory() + File.separator + "downloads" + File.separator + "test.pdf");
-		File file = new File(ReportContext.getTestDirectory() + File.separator + "downloads" + File.separator + "test.pdf");
-		System.out.println(file.exists());
-		Assert.assertTrue(file.exists(), "test.pdf is not available among downloaded artifacts");
+//		LOGGER.info(ReportContext.getTestDirectory() + File.separator + "downloads" + File.separator + "test.pdf");
+//		File file = new File(ReportContext.getTestDirectory() + File.separator + "downloads" + File.separator + "test.pdf");
+//		System.out.println(file.exists());
+//		Assert.assertTrue(file.exists(), "test.pdf is not available among downloaded artifacts");
 
-//		Optional<Path> file = SessionContext.getArtifact(getDriver(), "test.pdf");
-//		Assert.assertTrue(file.isPresent() && Files.exists(file.get()), "test.pdf is not available among downloaded artifacts");
+		Optional<Path> file = ArtifactUtils.getArtifact(getDriver(), "test.pdf", Duration.ofSeconds(30));
+		Assert.assertTrue(file.isPresent() && Files.exists(file.get()), "test.pdf is not available among downloaded artifacts");
 	}
 
 	@Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = "Unable to find artifact:.*", enabled = false)
@@ -60,7 +60,7 @@ public class AutoDownloadTest implements IAbstractTest {
 		DriverHelper driverHelper = new DriverHelper(getDriver());
 		driverHelper.openURL(url);
 
-		Optional<Path> path = SessionContext.getArtifact(getDriver(), UUID.randomUUID().toString());
+		Optional<Path> path = ArtifactUtils.getArtifact(getDriver(), UUID.randomUUID().toString(), Duration.ofSeconds(30));
 		Assert.assertTrue(path.isEmpty(), "artifact with random name available among downloaded artifacts");
 
 	}
@@ -81,31 +81,29 @@ public class AutoDownloadTest implements IAbstractTest {
 		driverHelper.openURL(url2);
 		driverHelper.openURL(url3);
 
-		FluentWait<WebDriver> wait = new FluentWait<>(getDriver()).pollingEvery(Duration.ofSeconds(5))
-				.withTimeout(Duration.ofSeconds(30));
+		FluentWait<WebDriver> wait = new FluentWait<>(getDriver()).pollingEvery(Duration.ofSeconds(5)).withTimeout(Duration.ofSeconds(30));
 
 		SoftAssert softAssert = new SoftAssert();
 
 		softAssert.assertTrue(ArtifactUtils.isArtifactPresent(wait, "test.pdf"), "test.pdf not found");
-		softAssert.assertTrue(ArtifactUtils.isArtifactPresent(wait, "Free_Test_Data_100KB_PDF.pdf"),
-				"Free_Test_Data_100KB_PDF.pdf not found");
+		softAssert.assertTrue(ArtifactUtils.isArtifactPresent(wait, "Free_Test_Data_100KB_PDF.pdf"), "Free_Test_Data_100KB_PDF.pdf not found");
 		softAssert.assertTrue(ArtifactUtils.isArtifactPresent(wait, "350KB.pdf"), "350KB.pdf not found");
 
 		softAssert.assertAll();
 
-		List<Path> files = SessionContext.getArtifacts(getDriver(), ".+");
+		List<Path> files = ArtifactUtils.getArtifacts(getDriver(), ".+", Duration.ofSeconds(EXPLICIT_TIMEOUT));
 		Assert.assertEquals(files.size(), 3);
 
-		files = SessionContext.getArtifacts(getDriver(), "Free_Test_Data.+");
+		files = ArtifactUtils.getArtifacts(getDriver(), "Free_Test_Data.+", Duration.ofSeconds(EXPLICIT_TIMEOUT));
 		Assert.assertEquals(files.size(), 1);
 
-		files = SessionContext.getArtifacts(getDriver(), "UUID.randomUUID().toString()");
+		files = ArtifactUtils.getArtifacts(getDriver(), "UUID.randomUUID().toString()", Duration.ofSeconds(EXPLICIT_TIMEOUT));
 		Assert.assertEquals(files.size(), 0);
 
-		List<String> fileNames = SessionContext.listArtifacts(getDriver());
+		List<String> fileNames = ArtifactUtils.listArtifacts(getDriver());
 		LOGGER.info(fileNames.toString());
 
-		files = SessionContext.getArtifacts(getDriver(), ".+KB.*.pdf");
+		files = ArtifactUtils.getArtifacts(getDriver(), ".+KB.*.pdf", Duration.ofSeconds(EXPLICIT_TIMEOUT));
 		Assert.assertEquals(files.size(), 2);
 
 	}
@@ -122,13 +120,11 @@ public class AutoDownloadTest implements IAbstractTest {
 		DriverHelper driverHelper = new DriverHelper(getDriver());
 		driverHelper.openURL(url);
 
-		FluentWait<WebDriver> wait = new FluentWait<>(getDriver()).pollingEvery(Duration.ofSeconds(1))
-				.withTimeout(Duration.ofSeconds(300));
+		FluentWait<WebDriver> wait = new FluentWait<>(getDriver()).pollingEvery(Duration.ofSeconds(1)).withTimeout(Duration.ofSeconds(300));
 
 		SoftAssert softAssert = new SoftAssert();
 
-		softAssert.assertTrue(ArtifactUtils.isArtifactPresent(wait, "Free_Test_Data_2.15MB_PDF.pdf"),
-				"Free_Test_Data_2.15MB_PDF.pdf not found");
+		softAssert.assertTrue(ArtifactUtils.isArtifactPresent(wait, "Free_Test_Data_2.15MB_PDF.pdf"), "Free_Test_Data_2.15MB_PDF.pdf not found");
 //		softAssert.assertTrue(ArtifactUtils.isArtifactPresent(wait, "sampledocs-100mb-pdf-file.pdf"), "sampledocs-100mb-pdf-file.pdf not found");
 
 		softAssert.assertAll();
