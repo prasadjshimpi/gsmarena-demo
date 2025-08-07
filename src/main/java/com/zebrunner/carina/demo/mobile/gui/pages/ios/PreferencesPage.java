@@ -9,7 +9,7 @@ import com.zebrunner.carina.webdriver.gui.AbstractPage;
 
 public class PreferencesPage extends AbstractPage {
 
-    @FindBy(xpath = "**/XCUIElementTypeCell[`label == \"General\"`]")
+    @FindBy(xpath = "**/XCUIElementTypeButton[`name == \"com.apple.settings.general\"`]")
     @ClassChain
     private ExtendedWebElement generalButton;
     
