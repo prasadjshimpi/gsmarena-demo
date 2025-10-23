@@ -58,12 +58,12 @@ public class WebSampleTest implements IAbstractTest {
         // Select phone brand
         BrandModelsPageBase productsPage = homePage.selectBrand("Samsung");
         // Select phone model
-        ModelInfoPageBase productInfoPage = productsPage.selectModel("Galaxy A04");
+        ModelInfoPageBase productInfoPage = productsPage.selectModel("Galaxy M17");
         // Verify phone specifications
         SoftAssert softAssert = new SoftAssert();
-        softAssert.assertEquals(productInfoPage.readDisplay(), "6.5\"", "Invalid display info!");
+        softAssert.assertEquals(productInfoPage.readDisplay(), "6.7\"", "Invalid display info!");
         softAssert.assertEquals(productInfoPage.readCamera(), "50MP", "Invalid camera info!");
-        softAssert.assertEquals(productInfoPage.readRam(), "3-8GB RAM", "Invalid ram info!");
+        softAssert.assertEquals(productInfoPage.readRam(), "4-8GB RAM", "Invalid ram info!");
         softAssert.assertEquals(productInfoPage.readBattery(), "5000mAh", "Invalid battery info!");
         softAssert.assertAll();
     }
@@ -85,11 +85,11 @@ public class WebSampleTest implements IAbstractTest {
         SoftAssert softAssert = new SoftAssert();
         softAssert.assertEquals(specs.get(0).readSpec(ModelSpecs.SpecType.ANNOUNCED), "2016, March 31. Released 2016, May 06");
         softAssert.assertEquals(specs.get(0).readSpec(ModelSpecs.SpecType.TECHNOLOGY), "GSM / HSPA / LTE");
-        softAssert.assertEquals(specs.get(1).readSpec(ModelSpecs.SpecType.ANNOUNCED), "2023, February 29");
+        softAssert.assertEquals(specs.get(1).readSpec(ModelSpecs.SpecType.ANNOUNCED), "2023, February 01");
         softAssert.assertEquals(specs.get(1).readSpec(ModelSpecs.SpecType.TECHNOLOGY), "GSM / CDMA / HSPA / EVDO / LTE / 5G");
         // for desktop could be compared 3 devices, when for mobile only 2
         if (specs.size() > 2) {
-            softAssert.assertEquals(specs.get(2).readSpec(ModelSpecs.SpecType.ANNOUNCED), "2017, June");
+            softAssert.assertEquals(specs.get(2).readSpec(ModelSpecs.SpecType.ANNOUNCED), "2017, June. Released 2017, July");
             softAssert.assertEquals(specs.get(2).readSpec(ModelSpecs.SpecType.TECHNOLOGY), "GSM / HSPA / LTE");
         }
 
